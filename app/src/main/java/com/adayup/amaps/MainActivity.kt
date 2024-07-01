@@ -1,66 +1,58 @@
-package com.adayup.aMaps;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.util.Log;
-import android.Manifest;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
+package com.adayup.aMaps
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+import android.os.Bundle
+import android.util.Log
+import android.widget.Button
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.textfield.TextInputEditText
+import com.xiaomi.xms.wearable.Status
+import com.xiaomi.xms.wearable.node.Node
+import test.invoke.sdk.XiaomiWatchHelper
 
-import test.invoke.sdk.XiaomiWatchHelper;
+class MainActivity : AppCompatActivity() {
+    lateinit var bannerText: TextView
+    lateinit var textInput: TextInputEditText
+    lateinit var sendButton: Button
+    var instance = XiaomiWatchHelper.getInstance(this)
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-public class MainActivity extends AppCompatActivity {
+        bannerText = findViewById(R.id.bannerText)
+        textInput = findViewById(R.id.textInput)
+        sendButton = findViewById(R.id.sendButton)
 
-    private static final String TAG = MainActivity.class.getName();
-    private static final int PERMISSION_REQUEST_CODE = 1;
-
-    private View.OnClickListener sendMessageFunction() {
-        return view -> {
-            Toast.makeText(view.getContext(), "Button clicked", Toast.LENGTH_SHORT).show();
-        };
-    }
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Button button = findViewById(R.id.sendButton);
-
-        //for bluetooth connection
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN},
-                    PERMISSION_REQUEST_CODE);
+        instance.setInitMessageListener { device: Node? ->
+            instance.sendMessageToWear(
+                "connected"
+            ) { obj: Status ->
+                if (obj.isSuccess) {
+                    Log.e("WATCH", "Init message send")
+                }
+            }
         }
 
+        instance.registerMessageReceiver()
+        instance.sendUpdateMessageToWear()
+        instance.sendNotify(
+            "aMaps", "Connected to aMaps :)"
+        ) { obj: Status ->
+            Log.e(
+                "WATCH",
+                "send notify ->" + obj.isSuccess
+            )
+        }
 
-        XiaomiWatchHelper instance = XiaomiWatchHelper.getInstance(this);
-//        instance.setReceiver((id, message) -> {
-//            runOnUiThread(() -> msg.setText(new String(message, StandardCharsets.UTF_8)));
-//            lastMessage = new String(message, StandardCharsets.UTF_8);
-//        });
-        instance.setInitMessageListener((device) -> instance.sendMessageToWear("connected", obj -> {
-            if (obj.isSuccess()) {
-                Log.e(TAG, "Init message send");
+        sendButton.setOnClickListener {
+            instance.sendMessageToWear(
+                textInput.text.toString()
+            ) { obj: Status ->
+                if (obj.isSuccess) {
+                    Log.e("WATCH", "Message send")
+                }
             }
-        }));
-
-        instance.registerMessageReceiver();
-        instance.sendUpdateMessageToWear();
-        instance.sendNotify("Title", "This is test message",
-                obj -> Log.e(TAG, "send notify ->" + obj.isSuccess()));
-
-        //handle the file when clicked
-        button.setOnClickListener(sendMessageFunction());
+        }
     }
 }

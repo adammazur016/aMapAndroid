@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+        android:layout_height="match_parent"
     android:theme="@style/Theme.AppCompat.DayNight"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity2">
 
     <TextView
         android:id="@+id/bannerText"
@@ -18,12 +18,21 @@
         app:layout_constraintRight_toRightOf="parent"
         android:textSize="30dp"/>
 
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/textInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/bannerText"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:hint="Wpisz tutaj wiadomosc"/>
+
     <Button
         android:id="@+id/sendButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Send test message"
-        app:layout_constraintTop_toBottomOf="@id/bannerText"
+        app:layout_constraintTop_toBottomOf="@id/textInput"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         />
