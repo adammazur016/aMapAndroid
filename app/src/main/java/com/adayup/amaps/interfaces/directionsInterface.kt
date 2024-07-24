@@ -8,11 +8,11 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface DirectionsInterface {
-    @POST("v2/directions/driving-car")
+    @POST("v2/directions/cycling-road")
     @Headers(
         "Content-Type: application/json; charset=utf-8",
         "Accept: application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8",
-        "Authorization: "
+        "Authorization: place_api_here" //PLACE API HERE
     )
     suspend fun getDirections(@Body request: DirectionRequest): Response<DirectionsResponse>
 }

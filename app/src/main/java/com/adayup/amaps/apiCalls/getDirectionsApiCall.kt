@@ -34,12 +34,12 @@ fun createEmptyDirectionsResponse(): DirectionsResponse {
     )
 }
 
-suspend fun getDirections(): DirectionsResponse {
+suspend fun getDirections(latS: Double,longS: Double, latD: Double, longD: Double): DirectionsResponse {
     val service = RetrofitClient.retrofitInstance.create(DirectionsInterface::class.java)
     val response: Response<DirectionsResponse> = withContext(Dispatchers.IO) {
 
         var listMain = listOf<List<Double>>()
-        listMain = listMain + listOf(listOf(17.61556,50.75425),listOf(17.61365,50.75420))
+        listMain = listMain + listOf(listOf(longS,latS),listOf(longD,latD))
         val directionRequest = DirectionRequest(listMain)
 
         service.getDirections(directionRequest)
